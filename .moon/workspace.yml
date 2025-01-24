@@ -13,3 +13,6 @@ $schema: 'https://moonrepo.dev/schemas/workspace.json'
 # and cannot reference projects located outside the workspace boundary.
 projects:
   client: "apps/web-client"
+  eks-ls: "apps/eks-manager-list-all-clusters-lambda"
+  eks-cpu: "apps/eks-set-cpu"
+  eks-terminate-ec2: "apps/eks-terminate-ec2"

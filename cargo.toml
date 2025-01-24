@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "apps/eks-manager-list-all-clusters-lambda",
+    "apps/eks-manager-set-cpu-karpenter-lambda",
+    "apps/eks-terminate-ec2",
+    "apps/event-scheduler"
+
+]

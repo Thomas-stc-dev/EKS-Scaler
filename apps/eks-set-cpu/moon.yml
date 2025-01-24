@@ -1,0 +1,18 @@
+language: "rust"
+type: "library"
+
+tasks:
+  dev:
+    command: "cargo lambda build --release"
+    description: "Build the lambda function"
+    env:
+      RUST_LOG: "info"
+  build:
+    command: "sam build"
+    description: "Build the lambda function"
+    env:
+      RUST_LOG: "info"
+  deploy:
+    command: 'sam deploy --role-arn arn:aws:iam::935103045726:role/lambda_execution_role --tags project=eks-scale --stack-name=eks-scaler'
+    deps:
+      - 'build'

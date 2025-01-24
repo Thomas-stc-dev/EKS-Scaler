@@ -1,0 +1,8 @@
+requests
+boto3
+pybase64
+regex
+pyyaml
+datetime
+kubernetes
+botocore

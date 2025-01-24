@@ -1,7 +1,8 @@
 node:
-  version: '22.0.0'
+  version: '20.0.0'
   packageManager: 'yarn'
   yarn:
     version: '1.22.22'
 rust:
   version: '1.69.0'
+  
