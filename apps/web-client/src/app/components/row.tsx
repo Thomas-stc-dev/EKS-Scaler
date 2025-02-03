@@ -1,13 +1,10 @@
 'use client'
 import { Card, Space, TimePicker, Button, Flex, Tag, Empty, message } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CloudServerOutlined, DownCircleOutlined, SaveOutlined, UpCircleOutlined } from '@ant-design/icons';
 import { FilteredData, ScheduleType } from './container';
-import { DynamoDBClient, QueryCommandOutput, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { useRouter } from 'next/navigation'
-
-const client = new DynamoDBClient({ region: "ap-northeast-1" });
 
 const format = 'HH:mm';
 
@@ -16,35 +13,27 @@ export interface RowProps {
 
 }
 
-export default function Row({ schedules }: RowProps) {
+export default function Row({ schedules }: RowProps) {    
     const router = useRouter();
     const [messageApi, contextHolder] = message.useMessage();
 
-    let defaultSchedule = schedules.find(schedule => schedule.kind === 'default');
-    let customSchedule = schedules.find(schedule => schedule.kind === 'custom');
+    const defaultSchedule = schedules.find(schedule => schedule.kind === 'default');
+    const customSchedule = schedules.find(schedule => schedule.kind === 'custom');
 
-    if (!defaultSchedule || !customSchedule) {
-        const defaultClusterName = defaultSchedule ? defaultSchedule?.id.split('_')[0] : customSchedule?.id.split('_')[0];
-        return (
-            <Card title={defaultClusterName} hoverable style={{ marginTop: 24 }}>
-                <Empty description={`${!customSchedule ? `No custom Schedule, check DB.` : `No default Schedule, check DB.`} `} />
 
-            </Card>
-        )
-    }
-
+    const disabled = defaultSchedule?.disabled;
     const defaultClusterName = defaultSchedule?.id.split('_')[0];
     // default times
-    const defaultStartHour = parseInt(defaultSchedule.start.split(':')[0]);
-    const defaultEndHour = parseInt(defaultSchedule.end.split(':')[0]);
-    const defaultStartMinute = parseInt(defaultSchedule.start.split(':')[1]);
-    const defaultEndMinute = parseInt(defaultSchedule.end.split(':')[1]);
+    const defaultStartHour = defaultSchedule ? parseInt(defaultSchedule.start.split(':')[0]) : 9;
+    const defaultEndHour = defaultSchedule ? parseInt(defaultSchedule.end.split(':')[0]) : 21;
+    const defaultStartMinute = defaultSchedule ? parseInt(defaultSchedule.start.split(':')[1]) : 0;
+    const defaultEndMinute = defaultSchedule ? parseInt(defaultSchedule.end.split(':')[1]) : 0;
 
     // custom times
-    const customStartHour = parseInt(customSchedule?.start.split(':')[0]);
-    const customEndHour = parseInt(customSchedule?.end.split(':')[0]);
-    const customStartMinute = parseInt(customSchedule?.start.split(':')[1]);
-    const customEndMinute = parseInt(customSchedule?.end.split(':')[1]);
+    const customStartHour = customSchedule ? parseInt(customSchedule?.start.split(':')[0]) : 9;
+    const customEndHour = customSchedule ? parseInt(customSchedule?.end.split(':')[0]) : 21;
+    const customStartMinute = customSchedule ? parseInt(customSchedule?.start.split(':')[1]) : 0;
+    const customEndMinute = customSchedule ? parseInt(customSchedule?.end.split(':')[1]) : 0;
 
     // using set before parse did not work
     // default
@@ -152,7 +141,7 @@ export default function Row({ schedules }: RowProps) {
             setIslLoading(false);
 
             const responseData = await response.json();
-            if (responseData.StatusCode === 200) {
+            if (responseData?.Payload?.statusCode === 200) {
                 success(responseData?.Payload?.body.text);
                 if (type !== 'up') {
                     // if previous reuest is 200 and is a scale down request
@@ -186,19 +175,29 @@ export default function Row({ schedules }: RowProps) {
         }
     }
 
+    if (!defaultSchedule || !customSchedule) {
+        const defaultClusterName = defaultSchedule ? defaultSchedule?.id.split('_')[0] : customSchedule?.id.split('_')[0];
+        return (
+            <Card title={defaultClusterName} hoverable style={{ marginTop: 24 }}>
+                <Empty description={`${!customSchedule ? `No custom Schedule, check DB.` : `No default Schedule, check DB.`} `} />
+
+            </Card>
+        )
+    }
+
     return (
-        <>
+        <div title={`${disabled ? `Disabled - edit DB to enable` : ``}`}>
             {contextHolder}
 
 
-            <Card title={defaultClusterName} hoverable style={{ marginTop: 24 }}
+            <Card  title={`${defaultClusterName}${disabled ? ` - Disabled` : ``}`} hoverable style={{ marginTop: 24, opacity: disabled ? 0.2 : 1, background: disabled ? '#cccccc' : '' }}
             // actions={[
             //     <CloseCircleTwoTone twoToneColor="#D0342C" title='Cluster Off' />,
             //     <InfoCircleTwoTone twoToneColor="#E9D502" title='Cluster Status Unknown' />,
             //     <CheckCircleTwoTone twoToneColor="#52c41a" title='Cluster On' />
             // ]}
-            >            <Flex align='center' justify='space-between' className="my-4">
-
+            >
+                <Flex align='center' justify='space-between' className="my-4" >
                     <Flex vertical>
 
                         <Space.Compact block direction='vertical' >
@@ -213,7 +212,7 @@ export default function Row({ schedules }: RowProps) {
                                         setCustomStartValue(dates ? dates[0] : customStartTime);
                                         setCustomEndValue(dates ? dates[1] : customEndTime);
                                     }} />
-                                <Button type="default" size='large' color="cyan" disabled={disableCustomSaveSchedule} icon={<SaveOutlined />}  onClick={() => saveSchedule(customSchedule)} loading={isLoading}>Save Schedule</Button>
+                                <Button type="default" size='large' color="cyan" disabled={disableCustomSaveSchedule} icon={<SaveOutlined />} onClick={() => saveSchedule(customSchedule)} loading={isLoading}>Save Schedule</Button>
                             </Space.Compact>
                         </Space.Compact>
 
@@ -238,12 +237,12 @@ export default function Row({ schedules }: RowProps) {
 
                     </Flex>
                     <Space.Compact direction='horizontal' >
-                        <Button type="primary" size='large' color="cyan" title="Scale Up" icon={<UpCircleOutlined />} onClick={() => callScaler("up")} loading={isLoading}>Scale Up</Button>
-                        <Button type="default" size='large' color="cyan" title="Scale Down" icon={<DownCircleOutlined />} onClick={() => callScaler("down")} loading={isLoading}>Scale Down</Button>
+                        <Button type="primary" size='large' color="cyan" title="Scale Up" icon={<UpCircleOutlined />} onClick={() => callScaler("up")} loading={isLoading}>Turn On</Button>
+                        <Button type="default" size='large' color="cyan" title="Scale Down" icon={<DownCircleOutlined />} onClick={() => callScaler("down")} loading={isLoading}>Turn Off</Button>
                     </Space.Compact>
                 </Flex>
 
             </Card>
-        </>
+        </div>
     )
 }

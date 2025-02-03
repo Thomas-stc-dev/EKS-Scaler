@@ -16,11 +16,7 @@ declare module "sst" {
       "codeSigningConfigArn": string
       "deadLetterConfig": any
       "description": string
-      "environment": {
-        "variables": {
-          "ec2_terminate_url": string
-        }
-      }
+      "environment": any
       "ephemeralStorages": any
       "fileSystemConfigs": any
       "functionName": string

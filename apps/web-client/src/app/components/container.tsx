@@ -11,6 +11,7 @@ export interface ScheduleType {
   kind: string;
   start: string;
   end: string;
+  disabled: boolean;
 
 }
 export interface FilteredData {
@@ -23,34 +24,35 @@ export default async function Container() {
     const params = {
       TableName: Resource['EKS-Scaler-Table'].name,
     };
-    let data: QueryCommandOutput = await client.send(new ScanCommand(params));
+    const data: QueryCommandOutput = await client.send(new ScanCommand(params));
     return data;
   }
 
   const filterData = (data: QueryCommandOutput): FilteredData => {
     const filteredData: FilteredData = {};
-    data.Items?.forEach((item) => {
-
+    data.Items?.forEach((item) => {      
       const cluster = item.cluster['S'] as string;
       const start = item.start['S'] || '09:00';
       const end = item.end['S'] || '21:00';
       const kind = item.kind['S'] || 'default';
       const id = item.id['S'] || '0';
-
+      const disabled = item.disabled['BOOL'] || false;
       // if custom then replace existing default
       if (!filteredData[cluster]) {
         filteredData[cluster] = [{
           id,
           start,
           end,
-          kind
+          kind,
+          disabled
         }];
       } else {
         filteredData[cluster].push({
           id,
           start,
           end,
-          kind
+          kind,
+          disabled
         }
         )
       }

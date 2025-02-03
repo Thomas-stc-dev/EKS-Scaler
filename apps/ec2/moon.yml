@@ -1,0 +1,18 @@
+language: "rust"
+type: "library"
+
+tasks:
+  dev:
+    command: "cargo lambda watch"
+    description: "Run the lambda function locally"
+    env:
+      RUST_LOG: "info"
+  build:
+    command: "cargo lambda build --release"
+    description: "Build the lambda function"
+    env:
+      RUST_LOG: "info"
+  deploy:
+    command: 'cargo lambda deploy --enable-function-url --iam-role arn:aws:iam::935103045726:role/lambda_execution_role --binary-name ec2 eks-scaler-ec2'
+    deps:
+      - 'build'

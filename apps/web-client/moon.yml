@@ -1,0 +1,18 @@
+language: "rust"
+type: "library"
+
+tasks:
+  dev:
+    command: "npx sst dev"
+    description: "Build the lambda function"
+    env:
+      RUST_LOG: "info"
+  build:
+    command: "npx sst install"
+    description: "Build the lambda function"
+    env:
+      RUST_LOG: "info"
+  deploy:
+    command: 'npx sst deploy'
+    deps:
+      - 'build'

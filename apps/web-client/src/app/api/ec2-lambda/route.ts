@@ -1,4 +1,4 @@
-import { LambdaClient, ListLayersCommand, InvokeCommand, GetFunctionUrlConfigCommand } from "@aws-sdk/client-lambda";
+import { LambdaClient, GetFunctionUrlConfigCommand } from "@aws-sdk/client-lambda";
 import Joi from 'joi';
 import { Resource } from 'sst';
 
@@ -33,10 +33,13 @@ export async function POST(request: Request) {
                 method: "GET",
                 redirect: "follow" as RequestRedirect
               };
-            const url = `${functionUrl}/?cluster-name=${clusterName}`;
+            const url = `${functionUrl}?cluster-name=${clusterName}`;
+            console.log(url);
+            
             const response = await fetch(url, requestOptions)            
             return response;
         } catch (error) {
+            console.log(error);
             return new Response(JSON.stringify({ error }), { status: 400 });
 
         }

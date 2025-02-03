@@ -22,8 +22,8 @@ export default $config({
       },
       primaryIndex: { hashKey: "id" }
     });
-    const SetKarpenterCpuLambda = await aws.lambda.getFunction({functionName: "eks-set-cpu-SetKarpenterCPUFunction-d09dEZ9VVs8N"})
-    const EksTerminateEc2Lambda = await aws.lambda.getFunction({functionName: "eks-terminate-ec2"})
+    const SetKarpenterCpuLambda = await aws.lambda.getFunction({functionName: "eks-scaler-SetKarpenterCPUFunction-wdLYETT9Cz1N"})
+    const EksTerminateEc2Lambda = await aws.lambda.getFunction({functionName: "eks-scaler-ec2"})
 
     const LambdaKarpenter = new sst.Linkable("KarpenterCPU", {
       properties: {

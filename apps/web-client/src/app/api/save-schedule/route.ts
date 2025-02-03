@@ -1,5 +1,4 @@
-import { NextApiRequest } from 'next';
-import { DynamoDBClient, QueryCommandOutput, ScanCommand, ScanCommandOutput, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import Joi from 'joi';
 import { Resource } from 'sst';
 

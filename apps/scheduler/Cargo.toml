@@ -1,0 +1,25 @@
+[package]
+name = "scheduler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aws-sdk-dynamodb = "1.60.0"
+lambda_http = "0.14.0"
+aws-config = { version = "1.5.14", features = ["behavior-version-latest"] }
+tokio = { version = "1", features = ["macros"] }
+serde = "1.0.217"
+chrono = "0.4.39"
+tracing = "0.1.41"
+anyhow = "1.0.95"
+reqwest = "0.12.12"
+chrono-tz = "0.10.1"
+openssl = { version = "0.10.35", features = ["vendored"] }
+
+
+[package.metadata.lambda.env]
+TABLE_NAME = "eks-scaler-web-client-stclab-EKSScalerTableTable"
+EKS_SET_CPU_URL = "https://7s5344t8af.execute-api.ap-northeast-1.amazonaws.com/Prod/set-cpu"
+EKS_TEMRINATE_EC2_URL = "https://s4apkcaks5okldjerabcditouq0pypfo.lambda-url.ap-northeast-1.on.aws/"
+[package.metadata.lambda.deploy]   # File to load environment variables from
+env = { "TABLE_NAME" = "eks-scaler-web-client-stclab-EKSScalerTableTable", "EKS_SET_CPU_URL" = "https://7s5344t8af.execute-api.ap-northeast-1.amazonaws.com/Prod/set-cpu", "EKS_TEMRINATE_EC2_URL" = "https://s4apkcaks5okldjerabcditouq0pypfo.lambda-url.ap-northeast-1.on.aws/"} 

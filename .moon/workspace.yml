@@ -1,5 +1,5 @@
 # https://moonrepo.dev/docs/config/workspace
-$schema: 'https://moonrepo.dev/schemas/workspace.json'
+$schema: "https://moonrepo.dev/schemas/workspace.json"
 
 # Require a specific version of moon while running commands, otherwise fail.
 # versionConstraint: '>=1.0.0'
@@ -12,7 +12,8 @@ $schema: 'https://moonrepo.dev/schemas/workspace.json'
 # path to the project folder as the map value. File paths are relative from the workspace root,
 # and cannot reference projects located outside the workspace boundary.
 projects:
+  list-clusters: "apps/list-clusters"
   client: "apps/web-client"
-  eks-ls: "apps/eks-manager-list-all-clusters-lambda"
-  eks-cpu: "apps/eks-set-cpu"
-  eks-terminate-ec2: "apps/eks-terminate-ec2"
+  karpenter: "apps/karpenter"
+  ec2: "apps/ec2"
+  scheduler: "apps/scheduler"

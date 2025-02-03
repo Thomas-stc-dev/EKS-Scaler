@@ -1,4 +1,4 @@
-import { LambdaClient, ListLayersCommand, InvokeCommand } from "@aws-sdk/client-lambda";
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import Joi from 'joi';
 import { Resource } from 'sst';
 
